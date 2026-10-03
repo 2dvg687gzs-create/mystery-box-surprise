@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff7f4" />
+  <title>mystery box.exe</title>
+  <style>
+    :root {
+      --cream: #fff8f3;
+      --paper: #fffdf8;
+      --pink-50: #fff0f4;
+      --pink-100: #ffdfe8;
+      --pink-200: #ffb3c7;
+      --pink-300: #ff86a7;
+      --coral: #dc3d5a;
+      --red: #e9445f;
+      --deep-red: #a62f47;
+      --ink: #2d2027;
+      --muted: #8f6871;
+      --shadow: rgba(163, 50, 76, .15);
+      --shadow-strong: rgba(119, 34, 55, .25);
+      --ease: cubic-bezier(.22, .9, .25, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: ui-rounded, "Avenir Next", "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; }
+
+    .app {
+      min-height: 100svh;
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 8% 15%, rgba(255, 179, 199, .26) 0 2px, transparent 3px),
+        radial-gradient(circle at 88% 17%, rgba(255, 179, 199, .3) 0 3px, transparent 4px),
+        radial-gradient(circle at 76% 84%, rgba(255, 134, 167, .2) 0 2px, transparent 3px),
+        linear-gradient(145deg, #fffaf5 0%, #fff2f5 50%, #fff8f3 100%);
+    }
+
+    .app::before,
+    .app::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 50%;
+      filter: blur(3px);
+    }
+    .app::before {
+      width: 390px;
+      height: 390px;
+      top: -165px;
+      right: -105px;
+      background: rgba(255, 182, 201, .25);
+    }
+    .app::after {
+      width: 320px;
+      height: 320px;
+      bottom: -165px;
+      left: -115px;
+      background: rgba(255, 217, 204, .38);
+    }
+
+    .topbar {
+      width: min(100% - 40px, 1160px);
+      margin: 0 auto;
+      padding: 24px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+      color: var(--deep-red);
+    }
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+      border-radius: 4px 8px 4px 8px;
+      background: var(--coral);
+      transform: rotate(14deg);
+      box-shadow: 3px 3px 0 var(--pink-200);
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 7px 11px;
+      border: 1px solid rgba(233, 68, 95, .15);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, .6);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      box-shadow: 0 5px 16px rgba(164, 55, 81, .05);
+    }
+
+    main {
+      width: min(100% - 32px, 980px);
+      min-height: calc(100svh - 78px);
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      padding: 38px 0 54px;
+    }
+
+    .stage {
+      width: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      animation: stage-in .65s var(--ease) both;
+    }
+    .stage[hidden] { display: none; }
+    @keyframes stage-in {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .stage-card {
+      width: min(100%, 620px);
+      padding: clamp(24px, 5vw, 52px) clamp(18px, 5vw, 48px) 38px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, .85);
+      border-radius: 34px;
+      background: rgba(255, 255, 255, .53);
+      box-shadow: 0 24px 70px rgba(173, 72, 94, .1), inset 0 1px rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .eyebrow {
+      margin: 0 0 11px;
+      color: var(--coral);
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    h1, h2, p { margin-top: 0; }
+    .prompt {
+      max-width: 540px;
+      margin: 0 auto;
+      color: var(--ink);
+      font-size: clamp(25px, 5vw, 41px);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+      font-weight: 950;
+    }
+    .prompt em {
+      font-style: normal;
+      color: var(--red);
+    }
+    .subcopy {
+      margin: 13px auto 0;
+      max-width: 410px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .stage-actions {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tap-target {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: min(100%, 340px);
+      min-height: 300px;
+      margin: 16px auto 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      border-radius: 28px;
+      outline: none;
+    }
+    .tap-target::before {
+      content: "";
+      position: absolute;
+      width: 245px;
+      height: 40px;
+      bottom: 25px;
+      border-radius: 50%;
+      background: rgba(150, 48, 72, .13);
+      filter: blur(7px);
+      transition: transform .4s var(--ease), opacity .4s;
+    }
+    .tap-target:focus-visible { box-shadow: 0 0 0 5px rgba(255, 134, 167, .32); }
+    .tap-target:hover .gift { transform: translateY(-6px) rotate(-1deg); }
+    .tap-target:active .gift { transform: translateY(1px) scale(.98); }
+    .tap-target .gift.is-hit { animation: hit-shake .27s ease both; }
+    @keyframes hit-shake {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      25% { transform: translateX(-8px) rotate(-3deg); }
+      55% { transform: translateX(7px) rotate(2deg); }
+      80% { transform: translateX(-3px) rotate(-1deg); }
+    }
+
+    .gift {
+      --box-w: 215px;
+      --box-h: 142px;
+      --lid-h: 38px;
+      width: var(--box-w);
+      height: var(--box-h);
+      position: relative;
+      transform: translateY(0);
+      transition: transform .35s var(--ease), filter .35s;
+      filter: drop-shadow(0 12px 8px rgba(131, 43, 64, .12));
+    }
+    .gift.small {
+      --box-w: 135px;
+      --box-h: 90px;
+      --lid-h: 25px;
+      filter: drop-shadow(0 10px 6px rgba(131, 43, 64, .16));
+    }
+    .gift-body,
+    .gift-lid {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 3px solid var(--deep-red);
+    }
+    .gift-body {
+      width: 100%;
+      height: calc(var(--box-h) - 12px);
+      bottom: 0;
+      overflow: hidden;
+      border-radius: 5px 5px 15px 15px;
+      background:
+        linear-gradient(90deg, transparent 0 42%, var(--coral) 42% 57%, transparent 57%),
+        linear-gradient(155deg, #ff8eaa, #ff647f);
+      box-shadow: inset 0 -10px 0 rgba(173, 37, 67, .08);
+    }
+    .gift.small .gift-body { border-width: 2px; border-radius: 4px 4px 10px 10px; }
+    .gift-body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,.2), transparent 38% 100%);
+      pointer-events: none;
+    }
+    .gift-lid {
+      z-index: 3;
+      top: 6px;
+      width: calc(100% + 14px);
+      height: var(--lid-h);
+      border-radius: 10px 10px 7px 7px;
+      background: linear-gradient(155deg, #ff99b4, #ff6b86);
+      box-shadow: inset 0 -5px 0 rgba(173, 37, 67, .1);
+      transition: transform .8s var(--ease), opacity .8s, top .8s var(--ease);
+      transform-origin: 50% 100%;
+    }
+    .gift.small .gift-lid { border-width: 2px; border-radius: 7px 7px 4px 4px; }
+    .ribbon-v {
+      position: absolute;
+      z-index: 2;
+      width: 20%;
+      height: 100%;
+      left: 40%;
+      background: rgba(255, 213, 221, .55);
+      border-left: 2px solid rgba(219, 61, 87, .25);
+      border-right: 2px solid rgba(219, 61, 87, .25);
+    }
+    .gift-lid .ribbon-v { height: 115%; top: -2px; }
+    .gift.small .ribbon-v { border-width: 1px; }
+    .ribbon-h {
+      position: absolute;
+      z-index: 2;
+      top: 44%;
+      left: 0;
+      width: 100%;
+      height: 20%;
+      background: rgba(255, 215, 222, .52);
+      border-top: 2px solid rgba(219, 61, 87, .22);
+      border-bottom: 2px solid rgba(219, 61, 87, .22);
+    }
+    .gift.small .ribbon-h { border-width: 1px; }
+    .bow {
+      position: absolute;
+      z-index: 5;
+      top: -19px;
+      left: 50%;
+      width: 44px;
+      height: 24px;
+      transform: translateX(-50%);
+    }
+    .bow::before,
+    .bow::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      width: 26px;
+      height: 19px;
+      border: 3px solid var(--deep-red);
+      background: var(--pink-200);
+      border-radius: 80% 15% 70% 20%;
+    }
+    .bow::before { right: 18px; transform: rotate(26deg); }
+    .bow::after { left: 18px; transform: scaleX(-1) rotate(26deg); }
+    .gift.small .bow { top: -14px; transform: translateX(-50%) scale(.7); }
+    .crack {
+      position: absolute;
+      z-index: 4;
+      width: 20px;
+      height: 17px;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+    }
+    .crack::before,
+    .crack::after {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 14px;
+      border-radius: 5px;
+      background: rgba(166, 47, 71, .72);
+      transform: rotate(35deg);
+    }
+    .crack::after { left: 9px; top: 7px; transform: rotate(-47deg); }
+    .crack.one { left: 18%; top: 48%; }
+    .crack.two { right: 15%; top: 65%; transform: rotate(75deg); }
+    .crack.three { left: 68%; top: 15%; transform: rotate(20deg); }
+    .gift[data-hits="1"] .crack.one,
+    .gift[data-hits="2"] .crack.one,
+    .gift[data-hits="3"] .crack.one,
+    .gift[data-hits="4"] .crack.one,
+    .gift[data-hits="5"] .crack.one,
+    .gift[data-hits="6"] .crack.one,
+    .gift[data-hits="7"] .crack.one,
+    .gift[data-hits="8"] .crack.one { opacity: 1; }
+    .gift[data-hits="3"] .crack.two,
+    .gift[data-hits="4"] .crack.two,
+    .gift[data-hits="5"] .crack.two,
+    .gift[data-hits="6"] .crack.two,
+    .gift[data-hits="7"] .crack.two,
+    .gift[data-hits="8"] .crack.two { opacity: 1; }
+    .gift[data-hits="5"] .crack.three,
+    .gift[data-hits="6"] .crack.three,
+    .gift[data-hits="7"] .crack.three,
+    .gift[data-hits="8"] .crack.three { opacity: 1; }
+    .gift.opening .gift-lid { transform: translate(-50%, -68px) rotate(-9deg); opacity: .96; }
+    .gift.small.opening .gift-lid { transform: translate(-50%, -44px) rotate(-10deg); }
+    .gift.opening .gift-body { animation: body-pop .8s var(--ease) both; }
+    @keyframes body-pop { 50% { transform: translateX(-50%) scale(1.07); } 100% { transform: translateX(-50%) scale(1); } }
+
+    .tap-hint {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 34px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: var(--deep-red);
+      background: rgba(255,255,255,.7);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      box-shadow: 0 7px 18px rgba(163, 50, 76, .07);
+    }
+    .tap-hint .dot { color: var(--coral); font-size: 16px; line-height: 0; }
+
+    .primary-btn,
+    .secondary-btn {
+      min-height: 54px;
+      border: 0;
+      border-radius: 17px;
+      padding: 14px 22px;
+      font-weight: 950;
+      letter-spacing: .01em;
+      transition: transform .2s var(--ease), box-shadow .2s, background .2s;
+    }
+    .primary-btn {
+      color: white;
+      background: linear-gradient(135deg, var(--coral), var(--red));
+      box-shadow: 0 10px 18px rgba(233, 68, 95, .22), inset 0 1px rgba(255,255,255,.3);
+    }
+    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 22px rgba(233, 68, 95, .28), inset 0 1px rgba(255,255,255,.3); }
+    .primary-btn:active { transform: translateY(1px) scale(.98); }
+    .secondary-btn {
+      color: var(--deep-red);
+      border: 1px solid rgba(233,68,95,.17);
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 8px 16px rgba(163, 50, 76, .07);
+    }
+    .secondary-btn:hover { transform: translateY(-2px); background: white; }
+    .secondary-btn:active { transform: translateY(1px) scale(.98); }
+
+    .sparkle-layer,
+    .confetti-layer,
+    .heart-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .spark {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      color: var(--coral);
+      transform: translate(-50%, -50%);
+      animation: sparkle-fly .7s ease-out both;
+    }
+    .spark::before,
+    .spark::after { content: ""; position: absolute; inset: 0; border-radius: 999px; background: currentColor; }
+    .spark::before { transform: scaleX(.28); }
+    .spark::after { transform: scaleY(.28); }
+    @keyframes sparkle-fly {
+      from { opacity: 1; transform: translate(-50%, -50%) scale(.7) rotate(0); }
+      to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4) rotate(120deg); }
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -24px;
+      width: 10px;
+      height: 15px;
+      border-radius: 3px;
+      background: var(--c);
+      animation: confetti-fall var(--dur) var(--delay) ease-in both;
+    }
+    .confetti-piece:nth-child(3n) { border-radius: 50%; }
+    .confetti-piece:nth-child(4n) { width: 7px; height: 20px; transform: rotate(35deg); }
+    @keyframes confetti-fall {
+      0% { opacity: 0; transform: translate3d(0, -20px, 0) rotate(0); }
+      10% { opacity: 1; }
+      100% { opacity: 1; transform: translate3d(var(--drift), 110vh, 0) rotate(680deg); }
+    }
+    .heart {
+      position: absolute;
+      bottom: -30px;
+      color: var(--c);
+      font-size: var(--size);
+      animation: heart-rise var(--dur) var(--delay) ease-out both;
+    }
+    @keyframes heart-rise {
+      from { opacity: 0; transform: translateY(0) rotate(0) scale(.6); }
+      15% { opacity: 1; }
+      to { opacity: 0; transform: translateY(-115vh) translateX(var(--drift)) rotate(25deg) scale(1.1); }
+    }
+
+    .inner-stage-card { padding-top: clamp(27px, 5vw, 52px); }
+    .inside-window {
+      width: min(100%, 410px);
+      min-height: 286px;
+      margin: 17px auto 2px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border-radius: 28px;
+      background: rgba(255, 226, 234, .48);
+      border: 2px dashed rgba(233,68,95,.17);
+    }
+    .inside-window::after {
+      content: "";
+      position: absolute;
+      bottom: 36px;
+      width: 175px;
+      height: 25px;
+      border-radius: 50%;
+      background: rgba(150,48,72,.12);
+      filter: blur(5px);
+    }
+    .math-card { width: min(100%, 500px); }
+    .equation {
+      margin: 27px 0 22px;
+      color: var(--red);
+      font-size: clamp(43px, 12vw, 76px);
+      line-height: .95;
+      letter-spacing: -.07em;
+      font-weight: 950;
+    }
+    .answer-form {
+      width: min(100%, 370px);
+      margin: 0 auto;
+      display: flex;
+      gap: 9px;
+    }
+    .answer-input {
+      width: 100%;
+      min-width: 0;
+      min-height: 56px;
+      padding: 13px 16px;
+      border: 2px solid rgba(233,68,95,.16);
+      border-radius: 17px;
+      outline: none;
+      color: var(--ink);
+      background: rgba(255,255,255,.8);
+      font-size: 20px;
+      font-weight: 950;
+      text-align: center;
+      transition: border .2s, box-shadow .2s;
+    }
+    .answer-input:focus { border-color: var(--pink-300); box-shadow: 0 0 0 5px rgba(255, 134, 167, .17); }
+    .answer-input.wrong { animation: wrong-answer .38s ease both; border-color: var(--red); }
+    @keyframes wrong-answer {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-9px); }
+      50% { transform: translateX(8px); }
+      75% { transform: translateX(-5px); }
+    }
+    .answer-form .primary-btn { flex: 0 0 auto; white-space: nowrap; }
+    .feedback {
+      min-height: 24px;
+      margin: 13px 0 0;
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 950;
+    }
+    .feedback.success { color: #229660; animation: feedback-pop .4s var(--ease) both; }
+    @keyframes feedback-pop { from { opacity: 0; transform: scale(.88); } to { opacity: 1; transform: scale(1); } }
+
+    .wait-card { background: rgba(255,255,255,.44); }
+    .wait-box-area {
+      min-height: 252px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+    .wait-number {
+      margin: 6px 0 0;
+      color: var(--red);
+      font-size: clamp(64px, 18vw, 115px);
+      line-height: .8;
+      letter-spacing: -.1em;
+      font-weight: 1000;
+      text-shadow: 5px 7px 0 rgba(255, 179, 199, .35);
+      animation: number-pop .55s var(--ease) both;
+    }
+    .wait-number.pulse { animation: number-pop .55s var(--ease) both; }
+    @keyframes number-pop {
+      from { opacity: 0; transform: scale(1.3) rotate(-5deg); }
+      65% { opacity: 1; transform: scale(.94) rotate(2deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    .wait-gift { transform: scale(.7); margin-top: -12px; }
+    .wait-gift.shiver { animation: shiver .32s ease both; }
+    @keyframes shiver { 25% { transform: scale(.7) translateX(-4px) rotate(-2deg); } 65% { transform: scale(.7) translateX(4px) rotate(2deg); } }
+
+    .big-count-stage {
+      width: 100%;
+      min-height: min(720px, calc(100svh - 115px));
+      display: grid;
+      place-items: center;
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 47%, rgba(255, 138, 162, .22), transparent 21%), linear-gradient(145deg, #fff0f4, #ffe3e9 50%, #ffd3dd);
+      box-shadow: 0 28px 80px rgba(173, 45, 72, .16);
+    }
+    .big-count-stage::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(255,255,255,.65);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+    .big-count-stage .eyebrow { position: absolute; top: 35px; left: 0; right: 0; z-index: 2; color: var(--red); }
+    .big-count-stage .subcopy { position: absolute; bottom: 37px; left: 0; right: 0; z-index: 2; color: var(--deep-red); }
+    .count-number {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      color: var(--red);
+      font-size: clamp(150px, 34vw, 320px);
+      line-height: .7;
+      letter-spacing: -.15em;
+      font-weight: 1000;
+      transform: translateX(-.06em);
+      text-shadow: 9px 13px 0 rgba(255,255,255,.66), 0 18px 35px rgba(181, 42, 68, .15);
+      animation: drama-number .72s var(--ease) both;
+    }
+    .count-number.change { animation: drama-number .72s var(--ease) both; }
+    @keyframes drama-number {
+      from { opacity: 0; transform: translateX(-.06em) scale(1.75) rotate(-8deg); filter: blur(4px); }
+      57% { opacity: 1; transform: translateX(-.06em) scale(.93) rotate(2deg); filter: blur(0); }
+      to { opacity: 1; transform: translateX(-.06em) scale(1) rotate(0); }
+    }
+    .big-count-stage .dramatic-box {
+      position: absolute;
+      bottom: 78px;
+      left: 50%;
+      opacity: .18;
+      transform: translateX(-50%) scale(.4);
+      filter: grayscale(.2);
+    }
+    .big-count-stage .dramatic-box .gift-lid { transition-duration: 1s; }
+    .big-count-stage.final-opening .count-number { animation: final-flash .8s ease both; }
+    .big-count-stage.final-opening .dramatic-box { opacity: 1; transform: translateX(-50%) scale(.55); transition: opacity .4s, transform .7s var(--ease); }
+    .big-count-stage.final-opening .dramatic-box .gift-lid { transform: translate(-50%, -78px) rotate(-12deg); }
+    @keyframes final-flash { 50% { opacity: .25; transform: translateX(-.06em) scale(1.15); } 100% { opacity: 0; transform: translateX(-.06em) scale(.8); } }
+
+    .paper-card { padding-bottom: 32px; }
+    .paper-scene {
+      width: min(100%, 420px);
+      min-height: 370px;
+      margin: 21px auto 0;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border-radius: 28px;
+      background: rgba(255, 226, 234, .45);
+      border: 1px solid rgba(255,255,255,.72);
+      overflow: hidden;
+    }
+    .paper-scene::after {
+      content: "";
+      position: absolute;
+      bottom: 45px;
+      width: 200px;
+      height: 23px;
+      border-radius: 50%;
+      background: rgba(150,48,72,.12);
+      filter: blur(7px);
+    }
+    .paper-stack {
+      width: 245px;
+      height: 280px;
+      position: relative;
+      transform: rotate(-2deg);
+      filter: drop-shadow(0 15px 12px rgba(134, 50, 69, .18));
+    }
+    .paper {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 25px;
+      border: 1px solid rgba(189, 145, 118, .4);
+      background: var(--paper);
+      color: var(--deep-red);
+    }
+    .paper-back {
+      z-index: 1;
+      transform: translate(13px, 12px) rotate(5deg);
+      background: #fff4e8;
+    }
+    .paper-front {
+      z-index: 2;
+      text-align: center;
+      font-size: 25px;
+      line-height: 1.05;
+      letter-spacing: -.055em;
+      font-weight: 1000;
+      transition: transform .95s var(--ease), opacity .8s;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+    .paper-front::before,
+    .paper-front::after {
+      content: "";
+      position: absolute;
+      left: 8%;
+      width: 84%;
+      height: 1px;
+      background: rgba(197, 145, 127, .24);
+    }
+    .paper-front::before { top: 25%; }
+    .paper-front::after { bottom: 23%; }
+    .paper-tear-line {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 18%;
+      border-top: 2px dashed rgba(233,68,95,.25);
+      transform: rotate(-2deg);
+    }
+    .paper-back {
+      color: var(--red);
+      font-size: 49px;
+      letter-spacing: -.09em;
+      font-weight: 1000;
+      text-align: center;
+      transition: transform 1s var(--ease), opacity .6s;
+    }
+    .paper-back .secret-message { opacity: 0; transform: scale(.65); transition: opacity .45s .25s var(--ease), transform .6s .25s var(--ease); }
+    .paper-stack.torn .paper-front { transform: translate(-35px, 18px) rotate(-19deg); opacity: 0; }
+    .paper-stack.torn .paper-back { transform: translate(0, 0) rotate(0); }
+    .paper-stack.torn .paper-back .secret-message { opacity: 1; transform: scale(1); }
+    .tear-button { margin-top: 22px; }
+    .final-caption {
+      opacity: 0;
+      max-height: 0;
+      margin: 0;
+      overflow: hidden;
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 900;
+      transition: opacity .5s .45s, max-height .5s .45s, margin .5s .45s;
+    }
+    .paper-card.revealed .final-caption { opacity: 1; max-height: 30px; margin-top: 18px; }
+    .paper-card.revealed .tear-button { opacity: 0; pointer-events: none; transform: scale(.8); height: 0; min-height: 0; padding: 0; margin: 0; overflow: hidden; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 560px) {
+      .topbar { width: min(100% - 28px, 1160px); padding-top: 17px; }
+      .brand { font-size: 9px; letter-spacing: .12em; }
+      .brand-dot { width: 10px; height: 10px; }
+      .status-pill { min-height: 27px; padding: 6px 9px; font-size: 8px; }
+      main { width: min(100% - 20px, 980px); min-height: calc(100svh - 62px); padding: 20px 0 30px; }
+      .stage-card { border-radius: 27px; padding-left: 16px; padding-right: 16px; }
+      .prompt { font-size: clamp(26px, 8vw, 36px); }
+      .subcopy { font-size: 13px; }
+      .tap-target { min-height: 270px; }
+      .gift { --box-w: 195px; --box-h: 130px; }
+      .inside-window { min-height: 256px; }
+      .answer-form { flex-direction: column; }
+      .answer-form .primary-btn { width: 100%; }
+      .wait-box-area { min-height: 240px; }
+      .big-count-stage { min-height: calc(100svh - 100px); border-radius: 28px; }
+      .big-count-stage::before { inset: 11px; border-radius: 19px; }
+      .big-count-stage .eyebrow { top: 27px; }
+      .big-count-stage .subcopy { bottom: 25px; padding: 0 25px; }
+      .big-count-stage .dramatic-box { bottom: 73px; transform: translateX(-50%) scale(.3); }
+      .big-count-stage.final-opening .dramatic-box { transform: translateX(-50%) scale(.42); }
+      .paper-scene { min-height: 355px; }
+      .paper-stack { transform: scale(.91) rotate(-2deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot" aria-hidden="true"></span> mystery box.exe</div>
+      <div class="status-pill" id="statusPill">suspiciously cute</div>
+    </header>
+
+    <main>
+      <section class="stage" id="stageBox1" aria-labelledby="box1Title">
+        <div class="stage-card">
+          <p class="eyebrow">classified delivery</p>
+          <h1 class="prompt" id="box1Title">There’s something inside <em>👀</em></h1>
+          <p class="subcopy">A tiny mystery has entered the chat. Investigate responsibly.</p>
+          <button class="tap-target" id="box1Button" type="button" aria-label="Tap the mysterious gift box">
+            <div class="gift" id="mainGift" data-hits="0" aria-hidden="true">
+              <div class="gift-lid"><span class="ribbon-v"></span><span class="bow"></span></div>
+              <div class="gift-body"><span class="ribbon-v"></span><span class="ribbon-h"></span><span class="crack one"></span><span class="crack two"></span><span class="crack three"></span></div>
+            </div>
+          </button>
+          <div class="tap-hint"><span class="dot">✦</span><span id="tapHint">tap the box to investigate</span><span class="dot">✦</span></div>
+          <div class="sr-only" id="tapAnnouncement" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="stage" id="stageBox2" aria-labelledby="box2Title" hidden>
+        <div class="stage-card inner-stage-card">
+          <p class="eyebrow">plot twist detected</p>
+          <h1 class="prompt" id="box2Title">WAIT… there’s another one? <em>😭</em></h1>
+          <p class="subcopy">The first box was apparently just a decoy. Extremely suspicious behavior.</p>
+          <div class="inside-window">
+            <button class="tap-target" id="box2Button" type="button" aria-label="Tap the smaller mystery box">
+              <div class="gift small" id="innerGift" data-hits="0" aria-hidden="true">
+                <div class="gift-lid"><span class="ribbon-v"></span><span class="bow"></span></div>
+                <div class="gift-body"><span class="ribbon-v"></span><span class="ribbon-h"></span><span class="crack one"></span><span class="crack two"></span></div>
+              </div>
+            </button>
+          </div>
+          <div class="tap-hint"><span class="dot">✦</span>tap the suspiciously tiny box<span class="dot">✦</span></div>
+        </div>
+      </section>
+
+      <section class="stage" id="stageMath" aria-labelledby="mathTitle" hidden>
+        <div class="stage-card math-card">
+          <p class="eyebrow">security check</p>
+          <h1 class="prompt" id="mathTitle">Okay genius, solve this to unlock the box <em>😭</em></h1>
+          <div class="equation" aria-label="20 times 3 equals question mark">20 × 3 = ?</div>
+          <form class="answer-form" id="answerForm">
+            <label class="sr-only" for="answerInput">Your answer</label>
+            <input class="answer-input" id="answerInput" type="text" inputmode="numeric" autocomplete="off" placeholder="??" aria-describedby="mathFeedback" />
+            <button class="primary-btn" type="submit">UNLOCK 🔓</button>
+          </form>
+          <p class="feedback" id="mathFeedback" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="stage" id="stageWait" aria-labelledby="waitTitle" hidden>
+        <div class="stage-card wait-card">
+          <p class="eyebrow">very official unlocking process</p>
+          <h1 class="prompt" id="waitTitle">Unlocking… don’t touch anything <em>👀</em></h1>
+          <div class="wait-box-area">
+            <div class="gift wait-gift" id="waitGift" aria-hidden="true">
+              <div class="gift-lid"><span class="ribbon-v"></span><span class="bow"></span></div>
+              <div class="gift-body"><span class="ribbon-v"></span><span class="ribbon-h"></span></div>
+            </div>
+            <div class="wait-number" id="waitNumber" aria-live="polite">5</div>
+          </div>
+          <p class="subcopy">Please remain calm. The box is thinking.</p>
+        </div>
+      </section>
+
+      <section class="stage" id="stageBigCount" aria-labelledby="bigCountTitle" hidden>
+        <div class="big-count-stage" id="bigCountPanel">
+          <p class="eyebrow" id="bigCountTitle">dramatic protocol engaged</p>
+          <div class="gift dramatic-box" id="dramaticGift" aria-hidden="true">
+            <div class="gift-lid"><span class="ribbon-v"></span><span class="bow"></span></div>
+            <div class="gift-body"><span class="ribbon-v"></span><span class="ribbon-h"></span></div>
+          </div>
+          <div class="count-number" id="countNumber" aria-live="polite">10</div>
+          <p class="subcopy">this feels unnecessarily intense tbh</p>
+        </div>
+      </section>
+
+      <section class="stage" id="stagePaper" aria-labelledby="paperTitle" hidden>
+        <div class="stage-card paper-card" id="paperCard">
+          <p class="eyebrow">final containment unit</p>
+          <h1 class="prompt" id="paperTitle">The box finally opened…</h1>
+          <div class="paper-scene">
+            <div class="paper-stack" id="paperStack">
+              <div class="paper paper-back"><span class="secret-message" id="secretMessage" aria-live="polite"></span></div>
+              <div class="paper paper-front">
+                <span>you don fra finish 😭💔</span>
+                <span class="paper-tear-line" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+          <div class="stage-actions">
+            <button class="primary-btn tear-button" id="tearButton" type="button">tear paper 🥹</button>
+          </div>
+          <p class="final-caption" id="finalCaption">case closed. feelings opened. 💌</p>
+        </div>
+      </section>
+    </main>
+
+    <div class="sparkle-layer" id="sparkleLayer" aria-hidden="true"></div>
+    <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+    <div class="heart-layer" id="heartLayer" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    (() => {
+      const stageIds = ['stageBox1', 'stageBox2', 'stageMath', 'stageWait', 'stageBigCount', 'stagePaper'];
+      const stages = Object.fromEntries(stageIds.map(id => [id, document.getElementById(id)]));
+      const statusPill = document.getElementById('statusPill');
+      const sparkleLayer = document.getElementById('sparkleLayer');
+      const confettiLayer = document.getElementById('confettiLayer');
+      const heartLayer = document.getElementById('heartLayer');
+      let audioContext;
+      let taps = 0;
+      let box1Opening = false;
+      let box2Opening = false;
+      let mathSolved = false;
+      let waitStarted = false;
+      let bigStarted = false;
+
+      function sound(kind) {
+        try {
+          audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+          if (audioContext.state === 'suspended') audioContext.resume();
+          const settings = {
+            tap: { start: 180, end: 100, duration: .08, type: 'triangle', volume: .045 },
+            pop: { start: 250, end: 610, duration: .18, type: 'sine', volume: .065 },
+            success: { start: 420, end: 880, duration: .34, type: 'sine', volume: .07 },
+            count: { start: 150, end: 105, duration: .11, type: 'square', volume: .035 },
+            tear: { start: 260, end: 70, duration: .25, type: 'sawtooth', volume: .045 }
+          }[kind] || { start: 220, end: 220, duration: .1, type: 'sine', volume: .03 };
+          const now = audioContext.currentTime;
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = settings.type;
+          osc.frequency.setValueAtTime(settings.start, now);
+          osc.frequency.exponentialRampToValueAtTime(Math.max(35, settings.end), now + settings.duration);
+          gain.gain.setValueAtTime(.0001, now);
+          gain.gain.exponentialRampToValueAtTime(settings.volume, now + .012);
+          gain.gain.exponentialRampToValueAtTime(.0001, now + settings.duration);
+          osc.connect(gain).connect(audioContext.destination);
+          osc.start(now);
+          osc.stop(now + settings.duration + .02);
+        } catch (error) {
+          // Audio is an optional enhancement; the game remains fully playable without it.
+        }
+      }
+
+      function showStage(id, status) {
+        stageIds.forEach(stageId => { stages[stageId].hidden = stageId !== id; });
+        if (status) statusPill.textContent = status;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function burstAt(element, count = 8) {
+        const rect = element.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        const colors = ['#ff5d78', '#ffb3c7', '#e9445f', '#ffd1dc', '#a62f47'];
+        for (let i = 0; i < count; i++) {
+          const spark = document.createElement('span');
+          spark.className = 'spark';
+          spark.style.left = `${x}px`;
+          spark.style.top = `${y}px`;
+          spark.style.color = colors[i % colors.length];
+          spark.style.setProperty('--dx', `${(Math.random() - .5) * 130}px`);
+          spark.style.setProperty('--dy', `${(Math.random() - .5) * 110}px`);
+          sparkleLayer.appendChild(spark);
+          spark.addEventListener('animationend', () => spark.remove(), { once: true });
+        }
+      }
+
+      function celebrate() {
+        const colors = ['#ff5d78', '#ffb3c7', '#e9445f', '#ffd4df', '#ffffff'];
+        for (let i = 0; i < 52; i++) {
+          const piece = document.createElement('span');
+          piece.className = 'confetti-piece';
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.setProperty('--c', colors[i % colors.length]);
+          piece.style.setProperty('--drift', `${(Math.random() - .5) * 260}px`);
+          piece.style.setProperty('--dur', `${2.4 + Math.random() * 2.2}s`);
+          piece.style.setProperty('--delay', `${Math.random() * .65}s`);
+          confettiLayer.appendChild(piece);
+          piece.addEventListener('animationend', () => piece.remove(), { once: true });
+        }
+        const hearts = ['♥', '♡', '❤', '💗'];
+        for (let i = 0; i < 18; i++) {
+          const heart = document.createElement('span');
+          heart.className = 'heart';
+          heart.textContent = hearts[i % hearts.length];
+          heart.style.left = `${5 + Math.random() * 90}%`;
+          heart.style.setProperty('--c', colors[i % 3]);
+          heart.style.setProperty('--size', `${17 + Math.random() * 21}px`);
+          heart.style.setProperty('--drift', `${(Math.random() - .5) * 180}px`);
+          heart.style.setProperty('--dur', `${3 + Math.random() * 2}s`);
+          heart.style.setProperty('--delay', `${Math.random() * .5}s`);
+          heartLayer.appendChild(heart);
+          heart.addEventListener('animationend', () => heart.remove(), { once: true });
+        }
+      }
+
+      const box1Button = document.getElementById('box1Button');
+      const mainGift = document.getElementById('mainGift');
+      const tapHint = document.getElementById('tapHint');
+      const tapAnnouncement = document.getElementById('tapAnnouncement');
+      box1Button.addEventListener('click', () => {
+        if (box1Opening) return;
+        taps += 1;
+        mainGift.dataset.hits = String(taps);
+        mainGift.classList.remove('is-hit');
+        void mainGift.offsetWidth;
+        mainGift.classList.add('is-hit');
+        burstAt(mainGift, 7);
+        sound('tap');
+        tapAnnouncement.textContent = `Investigation tap ${taps}.`;
+        const hints = ['hmm… definitely real', 'the box felt that', 'something is happening', 'it is becoming emotionally unstable', 'one more little bonk', 'okay wow', 'THE BOX HAS SPOKEN'];
+        tapHint.textContent = hints[Math.min(taps - 1, hints.length - 1)];
+        if (taps >= 7) {
+          box1Opening = true;
+          box1Button.disabled = true;
+          mainGift.classList.add('opening');
+          tapHint.textContent = 'opening classified contents…';
+          burstAt(mainGift, 18);
+          sound('pop');
+          setTimeout(() => showStage('stageBox2', 'plot twist incoming'), 980);
+        }
+      });
+
+      const box2Button = document.getElementById('box2Button');
+      const innerGift = document.getElementById('innerGift');
+      box2Button.addEventListener('click', () => {
+        if (box2Opening) return;
+        box2Opening = true;
+        box2Button.disabled = true;
+        innerGift.dataset.hits = '3';
+        innerGift.classList.add('is-hit', 'opening');
+        burstAt(innerGift, 14);
+        sound('pop');
+        setTimeout(() => showStage('stageMath', 'brain cell checkpoint'), 900);
+      });
+
+      const answerForm = document.getElementById('answerForm');
+      const answerInput = document.getElementById('answerInput');
+      const mathFeedback = document.getElementById('mathFeedback');
+      answerForm.addEventListener('submit', event => {
+        event.preventDefault();
+        if (mathSolved) return;
+        const answer = answerInput.value.trim();
+        answerInput.classList.remove('wrong');
+        void answerInput.offsetWidth;
+        if (answer === '60') {
+          mathSolved = true;
+          answerInput.disabled = true;
+          answerForm.querySelector('button').disabled = true;
+          mathFeedback.textContent = 'Okayyy you actually got it 😭👏';
+          mathFeedback.classList.add('success');
+          burstAt(answerForm, 18);
+          sound('success');
+          setTimeout(() => {
+            showStage('stageWait', 'do not tap');
+            startWait();
+          }, 1050);
+        } else {
+          answerInput.classList.add('wrong');
+          mathFeedback.classList.remove('success');
+          mathFeedback.textContent = 'Nahhh 😭 try again.';
+          sound('tap');
+          answerInput.focus();
+        }
+      });
+
+      function startWait() {
+        if (waitStarted) return;
+        waitStarted = true;
+        const waitNumber = document.getElementById('waitNumber');
+        const waitGift = document.getElementById('waitGift');
+        let number = 5;
+        waitNumber.textContent = String(number);
+        const interval = setInterval(() => {
+          number -= 1;
+          if (number > 0) {
+            waitNumber.textContent = String(number);
+            waitNumber.classList.remove('pulse');
+            void waitNumber.offsetWidth;
+            waitNumber.classList.add('pulse');
+            waitGift.classList.remove('shiver');
+            void waitGift.offsetWidth;
+            waitGift.classList.add('shiver');
+            burstAt(waitGift, 4);
+            sound('count');
+          } else {
+            clearInterval(interval);
+            setTimeout(startBigCountdown, 760);
+          }
+        }, 1000);
+      }
+
+      function startBigCountdown() {
+        if (bigStarted) return;
+        bigStarted = true;
+        showStage('stageBigCount', 'maximum suspense');
+        const countNumber = document.getElementById('countNumber');
+        const panel = document.getElementById('bigCountPanel');
+        let number = 10;
+        const tick = () => {
+          countNumber.textContent = String(number);
+          countNumber.classList.remove('change');
+          void countNumber.offsetWidth;
+          countNumber.classList.add('change');
+          sound('count');
+          if (number > 1) {
+            number -= 1;
+            setTimeout(tick, 760);
+          } else {
+            setTimeout(() => {
+              panel.classList.add('final-opening');
+              sound('pop');
+              burstAt(panel, 28);
+              setTimeout(() => showStage('stagePaper', 'classified feelings'), 1050);
+            }, 900);
+          }
+        };
+        tick();
+      }
+
+      const tearButton = document.getElementById('tearButton');
+      const paperStack = document.getElementById('paperStack');
+      const paperCard = document.getElementById('paperCard');
+      const secretMessage = document.getElementById('secretMessage');
+      tearButton.addEventListener('click', () => {
+        if (paperStack.classList.contains('torn')) return;
+        tearButton.disabled = true;
+        paperStack.classList.add('torn');
+        sound('tear');
+        setTimeout(() => {
+          // The secret only enters the DOM at the final, user-triggered reveal.
+          secretMessage.textContent = 'ily🥹💓';
+          paperCard.classList.add('revealed');
+          celebrate();
+          sound('success');
+          burstAt(paperStack, 24);
+        }, 620);
+      });
+    })();
+  </script>
+</body>
+</html>
